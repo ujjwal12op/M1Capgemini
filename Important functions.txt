@@ -85,4 +85,10 @@ USE COALESCE(COUNT(account_id),0)
  (af.departure_time + INTERVAL '1' HOUR) AS Delayed_Departure_Time,
  (af.arrival_time + INTERVAL '1' HOUR) AS Delayed_Arrival_Time
 
+----------------------------------
+
+Write a query to display all product names and prices where the last_updated date is within the last 90 days from today (CURRENT_DATE).
+
+
+last_updated >= DATE_SUB(CURDATE(), INTERVAL 90 DAY);
 
