@@ -1,0 +1,92 @@
+1. Maximum customers in branch
+Step-by-step logic
+Count customers per branch
+From account_master, group by branch_id and count how many customers each branch has.
+
+Find the maximum count
+Take the highest value from that count.
+
+Get branch details for that maximum
+Join with branch_master to get the branch name and city.
+
+Sort by branch_name if more than one result.
+
+Easiest SQL query
+sql
+Copy
+Edit
+SELECT bm.branch_name, bm.branch_city
+FROM branch_master bm
+JOIN account_master am 
+    ON bm.branch_id = am.branch_id
+GROUP BY bm.branch_name, bm.branch_city
+HAVING COUNT(am.account_number) = (
+    SELECT MAX(customer_count)
+    FROM (
+        SELECT COUNT(account_number) AS customer_count
+        FROM account_master
+        GROUP BY branch_id
+    ) sub
+
+)
+ORDER BY bm.branch_name ASC;
+
+2. 
+
+SELECT DISTINCT
+    cm.CUSTOMER_ID,
+    cm.CUSTOMER_NAME,
+    ccd.CARD_ID AS card_id,
+    lcm.DESCRIPTION,
+    ROUND(lcm.AMOUNT / 52, 0) AS AMOUNT_DOLLAR
+FROM
+    CUSTOMER_MASTER cm
+JOIN CUSTOMER_CARD_DETAILS ccd
+    ON cm.CUSTOMER_ID = ccd.CUSTOMER_ID
+JOIN LIBRARY_CARD_MASTER lcm
+    ON ccd.CARD_ID = lcm.CARD_ID
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM CUSTOMER_ISSUE_DETAILS cid
+    WHERE cid.CUSTOMER_ID = cm.CUSTOMER_ID
+      AND cid.ISSUE_DATE = ccd.REGISTRATION_DATE
+)
+ORDER BY
+    cm.CUSTOMER_NAME ASC;
+
+
+
+3. Whenever asked employeed issued atleast 1 item , ya atleast 1 thing 
+
+So always think of where something is not null
+
+4. Whenever asked where something not issued to any.
+LEFT JOIN 
+only null values column
+
+5. WHENEVER comparing question come with minimum , maximum , average etc. Employeee with minimum number of tickets
+
+SELECT profile_id
+FROM air_ticket_info
+GROUP BY profile_id
+HAVING count(ticket_id) = (SELECT count(ticket_id)
+                           FROM air_ticket_info
+                           GROUP BY profile_id
+                           ORDER BY count(ticket_id)
+                           LIMIT 1)
+ORDER BY profile_id ASC;
+
+DATE_FORMAT(ati.flight_departure_date, '%h:%i:%s %p') as 'actual_departure_time',
+  DATE_FORMAT(DATE_ADD(af.departure_time, INTERVAL 1 HOUR), '%h:%i:%s %p') as 'delayed_departure_time',
+  DATE_FORMAT(DATE_ADD(af.arrival_time, INTERVAL 1 HOUR), '%h:%i:%s %p') as 'delayed_arrival_time'
+FROM
+
+6. USE OF CASES 
+
+CASE
+        WHEN departure_time BETWEEN '05:00:01' AND '12:00:00' THEN 'Morning' ELSE
+        WHEN departure_time BETWEEN '12:00:01' AND '18:00:00' THEN 'Afternoon'
+        WHEN departure_time BETWEEN '18:00:01' AND '23:59:59' THEN 'Evening'
+        WHEN departure_time BETWEEN '00:00:01' AND '05:00:00' THEN 'Night'
+        ELSE 'Unknown'
+END AS Time_of_Service
