@@ -69,4 +69,20 @@ ROUND(NUMBER,2)
 CEIL
 FLOOR
 
+Q. For branch city where we do not have any accounts opened display 0.
+
+USE COALESCE(COUNT(account_id),0)
+
+# BETWEEEN TO_DATE('05:00:01','HH24:MI:SS') AND TO_DATE('06:01:00','HH24:MM:SS') : TO CONVERT STRING INTO HH24:MM:SS FORMAT
+
+# LOWER(LEFT(string,1)) : eg: UJJWAL : selects 'U'
+# LOWER(RIGHT(string,1)) : same ex : selects 'L'
+# TO_CHAR(Salary,'FM999,999,999') EG: 80000 -> 80,000
+
+
+
+-----------------------------------------------------------------
+ (af.departure_time + INTERVAL '1' HOUR) AS Delayed_Departure_Time,
+ (af.arrival_time + INTERVAL '1' HOUR) AS Delayed_Arrival_Time
+
 

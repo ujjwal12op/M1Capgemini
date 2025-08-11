@@ -1,35 +1,28 @@
-1. Maximum customers in branch
-Step-by-step logic
-Count customers per branch
-From account_master, group by branch_id and count how many customers each branch has.
+1. Maximum/Minimum customers in branch
 
-Find the maximum count
-Take the highest value from that count.
-
-Get branch details for that maximum
-Join with branch_master to get the branch name and city.
-
-Sort by branch_name if more than one result.
-
-Easiest SQL query
-sql
-Copy
-Edit
-SELECT bm.branch_name, bm.branch_city
-FROM branch_master bm
-JOIN account_master am 
-    ON bm.branch_id = am.branch_id
-GROUP BY bm.branch_name, bm.branch_city
-HAVING COUNT(am.account_number) = (
-    SELECT MAX(customer_count)
-    FROM (
-        SELECT COUNT(account_number) AS customer_count
-        FROM account_master
-        GROUP BY branch_id
-    ) sub
-
+WITH BranchAccountCounts AS (
+    SELECT
+        branch_id,
+        COUNT(account_number) AS customer_count
+    FROM
+        account_master
+    GROUP BY
+        branch_id
 )
-ORDER BY bm.branch_name ASC;
+SELECT
+    bm.branch_name,
+    bm.branch_city
+FROM
+    branch_master bm
+JOIN
+    BranchAccountCounts bac ON bm.branch_id = bac.branch_id
+WHERE
+    bac.customer_count = (
+        SELECT MAX(customer_count)
+        FROM BranchAccountCountsim
+    )
+ORDER BY
+    bm.branch_name ASC;
 
 2. 
 
@@ -90,3 +83,84 @@ CASE
         WHEN departure_time BETWEEN '00:00:01' AND '05:00:00' THEN 'Night'
         ELSE 'Unknown'
 END AS Time_of_Service
+
+
+Q. Passengers who booked minimum number of tickets 
+
+WITH PassengerTable AS (
+SELECT profile_id,COUNT(*) As count
+FROM air_ticket_infor
+GROUP BY profile_id
+) 
+SELECT profile_id 
+FROM PassengerTable
+WHERE COUNT(ticketid) = (SELECT MIN(count) FROM PassengerTable)
+ORDER BY profile_id ASC;
+
+
+Q.
+am.opening_balance+SUM(CASE WHEN transaction_type='Deposit' THEN transaction_amount ELSE 0 END) AS Deposit
+SUM(CASE WHEN transaction_type='Withdrawal' THEN transaction_amount ELSE 0 END) AS Withdrawal
+
+
+Q. Customer with MIN/MAX count.
+
+WITH CustomerMovieCounts AS (
+    SELECT
+        c.customer_id,
+        c.customer_name,
+        COUNT(i.movie_id) AS movie_count
+    FROM
+        customer_master c
+    JOIN
+        issue_table i ON c.customer_id = i.customer_id
+    GROUP BY
+        c.customer_id,
+        c.customer_name
+    HAVING
+        COUNT(i.movie_id) >= 1  -- Only consider customers with at least 1 movie
+),
+MinMaxCounts AS (
+    SELECT
+        MIN(movie_count) AS min_count,
+        MAX(movie_count) AS max_count
+    FROM
+        CustomerMovieCounts
+)
+SELECT
+    cmc.customer_id,
+    cmc.customer_name
+FROM
+    CustomerMovieCounts cmc
+CROSS JOIN
+    MinMaxCounts mmc
+WHERE
+    cmc.movie_count = mmc.max_count
+    OR cmc.movie_count = mmc.min_count
+ORDER BY
+    CASE
+        WHEN cmc.movie_count = mmc.max_count THEN 1
+        WHEN cmc.movie_count = mmc.min_count THEN 2
+    END,
+    cmc.customer_id ASC;
+
+
+Q. Tickets full more than 10%.
+
+SELECT
+    af.flight_id,
+    af.from_location,
+    af.to_location,
+    af.total_seats,
+    COUNT(ati.ticket_id) AS "No of Seats Booked"
+FROM
+    air_flight af
+JOIN
+    air_ticket_info ati ON af.flight_id = ati.flight_id
+GROUP BY
+    af.flight_id,
+    af.from_location,
+    af.to_location,
+    af.total_seats
+HAVING
+    (COUNT(ati.ticket_id) * 100.0 / af.total_seats) > 10;
