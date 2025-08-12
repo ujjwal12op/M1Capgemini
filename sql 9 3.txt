@@ -1,0 +1,238 @@
+4. Oracle: Passengers from Chennai
+Database
+Accepted
+ER Diagram:
+
+﻿
+
+ Tables Descriptions
+
+air_passenger_profile
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| profile_id    | varchar(10) | NO   |     | NULL    |       |
+| password      | varchar(45) | YES  |     | NULL    |       |
+| first_name    | varchar(45) | YES  |     | NULL    |       |
+| last_name     | varchar(45) | YES  |     | NULL    |       |
+| address       | varchar(45) | YES  |     | NULL    |       |
+| mobile_number | bigint      | YES  |     | NULL    |       |
+| email_id      | varchar(45) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+Problem Description
+
+ Write a query to display the profile id, last name, mobile number, and email id of passengers whose base location is chennai. Take the string for location chennai as "Chennai".
+Display the records sorted in ascending order based on profile id.
+Column Name: profile_id, last_name, mobile_number, email_id
+Sample Output
+
++------------+-----------+---------------+----------------+
+| profile_id | last_name | mobile_number | email_id       |
++------------+-----------+---------------+----------------+
+| 27         | Sinha     |    9832015785 | tony@gmail.com |
++------------+-----------+---------------+----------------+
+1 row in set (0.00 sec)
+ select profile_id,last_name,mobile_number, email_id 
+ from air_passenger_profile
+ where LOWER(address) LIKE '%chennai%'
+ order by profile_id asc; 
+8. Oracle: Total Amount Deposited
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+account_master
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| account_number       | varchar(255) | NO   | PRI | NULL    |       |
+| customer_number      | varchar(255) | YES  | MUL | NULL    |       |
+| branch_id            | varchar(255) | YES  | MUL | NULL    |       |
+| opening_balance      | int          | YES  |     | NULL    |       |
+| account_opening_date | date         | YES  |     | NULL    |       |
+| account_type         | varchar(10)  | YES  |     | NULL    |       |
+| account_status       | varchar(10)  | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+transaction_details
++-----------------------+-------------+------+-----+---------+-------+
+| Field                 | Type        | Null | Key | Default | Extra |
++-----------------------+-------------+------+-----+---------+-------+
+| transaction_number    | varchar(6)  | NO   | PRI | NULL    |       |
+| account_number        | varchar(6)  | YES  | MUL | NULL    |       |
+| date_of_transaction   | date        | YES  |     | NULL    |       |
+| medium_of_transaction | varchar(20) | YES  |     | NULL    |       |
+| transaction_type      | varchar(20) | YES  |     | NULL    |       |
+| transaction_amount    | int         | YES  |     | NULL    |       |
++-----------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the account number and total amount deposited by each account holder (Including the opening balance).
+Give the total amount deposited an alias name of Deposit_Amount. 
+Display the records in sorted order based on account number.
+Please write any String value in Upper Case OR take the string for the term deposit as "DEPOSIT".
+Column Name: account_number, Deposit_Amount 
+Sample Output
+
++----------------+----------------+
+| account_number | Deposit_Amount |
++----------------+----------------+
+| A10002         |          20000 |
+| A10005         |           8000 |
+| A10009         |          27000 |
++----------------+----------------+
+3 rows in set (0.00 sec)
+ select a.account_number,
+ a.opening_balance 
++ SUM(CASE 
+    WHEN b.transaction_type = 'DEPOSIT' THEN b.transaction_amount
+    ELSE 0
+    END) AS Deposit_Amount
+ from account_master a,transaction_details b
+ where a.account_number=b.account_number
+ group by a.account_number,
+ a.opening_balance 
+ order by a.account_number asc;
+10. Oracle: Account Withdrawals Deposit
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+account_master
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| account_number       | varchar(255) | NO   | PRI | NULL    |       |
+| customer_number      | varchar(255) | YES  | MUL | NULL    |       |
+| branch_id            | varchar(255) | YES  | MUL | NULL    |       |
+| opening_balance      | int          | YES  |     | NULL    |       |
+| account_opening_date | date         | YES  |     | NULL    |       |
+| account_type         | varchar(10)  | YES  |     | NULL    |       |
+| account_status       | varchar(10)  | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+transaction_details
++-----------------------+-------------+------+-----+---------+-------+
+| Field                 | Type        | Null | Key | Default | Extra |
++-----------------------+-------------+------+-----+---------+-------+
+| transaction_number    | varchar(6)  | NO   | PRI | NULL    |       |
+| account_number        | varchar(6)  | YES  | MUL | NULL    |       |
+| date_of_transaction   | date        | YES  |     | NULL    |       |
+| medium_of_transaction | varchar(20) | YES  |     | NULL    |       |
+| transaction_type      | varchar(20) | YES  |     | NULL    |       |
+| transaction_amount    | int         | YES  |     | NULL    |       |
++-----------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display all those account numbers, deposits, and withdrawals where the withdrawal is more than the deposit amount.
+Hint: The deposit should include the opening balance as well. For example, the A00011 account was opened with an Opening Balance of 1000, and A00011 deposited 2000 rupees on 2012-12-01 and 3000 rupees on 2012-12-02. The same account i.e A00011 withdrew 3000 rupees on 2013-01-01 and 7000 rupees on 2013-01-03. So the total deposited amount is 6000 and the total withdrawal amount is 10000. So withdrawal amount is more than the deposited amount for account number A00011.
+Display the records sorted in ascending order based on account number.
+Column Name: account_number, Deposit, Withdrawal
+Sample Output
+
++----------------+---------+------------+
+| account_number | Deposit | Withdrawal |
++----------------+---------+------------+
+| A00011         |   6000  |      10000 |
++----------------+---------+------------
+ select a.account_number,
+ a.opening_balance
+ +sum(case
+    WHEN b.transaction_type='DEPOSIT' THEN b.transaction_amount else 0 END) as   Deposit,
+  sum(case
+  WHEN b.transaction_type='WITHDRAWAL' THEN b.transaction_amount else 0 END)as  
+  Withdrawal
+ from account_master a,transaction_details b
+ where a.account_number=b.account_number
+ group by a.account_number,a.opening_balance
+ having  sum(case
+  WHEN b.transaction_type='WITHDRAWAL' THEN b.transaction_amount else 0 END)>a.opening_balance+sum(case
+    WHEN b.transaction_type='DEPOSIT' THEN b.transaction_amount else 0 END)
+ order by a.account_number asc;
+
+2. Oracle: Passengers Boarding to Hyderabad
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+air_passenger_profile
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| profile_id    | varchar(10) | NO   |     | NULL    |       |
+| password      | varchar(45) | YES  |     | NULL    |       |
+| first_name    | varchar(45) | YES  |     | NULL    |       |
+| last_name     | varchar(45) | YES  |     | NULL    |       |
+| address       | varchar(45) | YES  |     | NULL    |       |
+| mobile_number | NUMBER(15)  | YES  |     | NULL    |       |
+| email_id      | varchar(45) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+air_ticket_info
++-----------------------+-------------+------+-----+---------+-------+
+| Field                 | Type        | Null | Key | Default | Extra |
++-----------------------+-------------+------+-----+---------+-------+
+| ticket_id             | varchar(45) | NO   |     | NULL    |       |
+| profile_id            | varchar(10) | YES  |     | NULL    |       |
+| flight_id             | varchar(45) | YES  |     | NULL    |       |
+| flight_departure_date | date        | YES  |     | NULL    |       |
+| status                | varchar(45) | YES  |     | NULL    |       |
++-----------------------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+Problem Description
+
+Write a query to inform the passengers who are boarding from Chennai to Hyderabad Flight on 6th May 2013 stating the delay of 1hr in the departure time.
+The Query should display the passenger’s profile_id, first_name, last_name, flight_id, flight_departure_date, actual departure time , actual arrival time , delayed departure time as "Delayed_Departure_Time", delayed arrival time
+as "Delayed_Arrival_Time".
+
+Hint: Distinct Profile ID should be displayed irrespective of multiple tickets
+booked by the same profile.
+Display the records sorted in ascending order based on passenger's profile id.
+Sample Output
+
+PROFILE_ID FIRST_NAME      LAST_NAME       FLIGHT_ID  FLIGHT_DE DEPARTURE_TIME                                                              ARRIVAL_TIME                                                                DELAYED_DEPARUTURE_TIME                                                     DELAYED_ARRIVAL_TIME
+---------- --------------- --------------- ---------- --------- --------------------------------------------------------------------------- --------------------------------------------------------------------------- --------------------------------------------------------------------------- ---------------------------------------------------------------------------
+1          John            Stuart          3178       06-MAY-13 01-AUG-23 08.00.00.000000 AM                                                01-AUG-23 09.00.00.000000 AM                                                01-AUG-23 09.00.00.000000000 AM                                             01-AUG-23 10.00.00.000000000 AM
+Note:
+
+Use the column names as given in the query as they are case-sensitive.
+
+ SELECT DISTINCT ap.profile_id,ap.first_name,ap.last_name,ati.flight_id,ati.flight_departure_date,
+af.departure_time,af.arrival_time,
+(af.departure_time + INTERVAL '1' HOUR) AS Delayed_Deparuture_Time,
+(af.arrival_time + INTERVAL '1' HOUR) AS Delayed_Arrival_Time FROM
+air_passenger_profile ap JOIN air_ticket_info ati ON ap.profile_id=ati.profile_id
+JOIN air_flight af ON af.flight_id=ati.flight_id
+WHERE af.from_location='chennai' and af.to_location='hyderabad' 
+and ati.flight_departure_date=TO_DATE('2013-05-06', 'YYYY-MM-DD')
+ORDER BY profile_id;

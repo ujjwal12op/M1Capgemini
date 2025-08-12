@@ -1,0 +1,649 @@
+1. Oracle: Customer with Gold Card
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+LIBRARY_CARD_MASTER
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| CARD_ID         | varchar(10) | NO   | PRI | NULL    |       |
+| DESCRIPTION     | varchar(30) | NO   |     | NULL    |       |
+| AMOUNT          | bigint      | YES  |     | NULL    |       |
+| NUMBER_OF_YEARS | bigint      | NO   |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+﻿CUSTOMER_CARD_DETAILS
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| CUSTOMER_ID | varchar(10) | NO   | PRI | NULL    |       |
+| CARD_ID     | varchar(10) | YES  | MUL | NULL    |       |
+| ISSUE_DATE  | date        | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the number of customers having cards with the description “Gold”.
+Hint: Use CUSTOMER_COUNT as an alias name for the number of customers
+Column Name: CUSTOMER_COUNT
+Sample Output
+
++----------------+
+| CUSTOMER_COUNT |
++----------------+
+|              6 |
++----------------+
+select count(*) as CUSTOMER_COUNT from CUSTOMER_CARD_DETAILS where card_id in(select card_id from LIBRARY_CARD_MASTER where DESCRIPTION='Gold');
+
+2. Oracle: Customer in Delhi
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+customer_master
++------------------------+-------------+------+-----+---------+-------+
+| Field                  | Type        | Null | Key | Default | Extra |
++------------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_NUMBER        | varchar(6)  | NO   | PRI | NULL    |       |
+| FIRSTNAME              | varchar(30) | YES  |     | NULL    |       |
+| middlename             | varchar(30) | YES  |     | NULL    |       |
+| lastname               | varchar(30) | YES  |     | NULL    |       |
+| CUSTOMER_CITY          | varchar(15) | YES  |     | NULL    |       |
+| CUSTOMER_CONTACT_NO    | varchar(10) | YES  |     | NULL    |       |
+| occupation             | varchar(10) | YES  |     | NULL    |       |
+| CUSTOMER_DATE_OF_BIRTH | date        | YES  |     | NULL    |       |
++------------------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+Problem Description
+
+ Write a query to display the number of customers from Delhi(i.e., the city name is 'DELHI'). Give the count an alias name of Cust_Count.
+Column Name: Cust_Count
+Sample Output
+
+Cust_Count 
+-----------
+     7
+ select count(*)as Cust_Count from customer_master where CUSTOMER_CITY='DELHI';
+
+3. Oracle: Bank Account Details
+Database
+Accepted
+ER Diagram:
+
+
+
+Oracle: Bank Account Details
+
+
+Tables Descriptions
+
+
+
+account_master
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| account_number       | varchar(255) | NO   | PRI | NULL    |       |
+| customer_number      | varchar(255) | YES  | MUL | NULL    |       |
+| branch_id            | varchar(255) | YES  | MUL | NULL    |       |
+| opening_balance      | int          | YES  |     | NULL    |       |
+| account_opening_date | date         | YES  |     | NULL    |       |
+| account_type         | varchar(10)  | YES  |     | NULL    |       |
+| account_status       | varchar(10)  | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+customer_master
++------------------------+-------------+------+-----+---------+-------+
+| Field                  | Type        | Null | Key | Default | Extra |
++------------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_NUMBER        | varchar(6)  | NO   | PRI | NULL    |       |
+| FIRSTNAME              | varchar(30) | YES  |     | NULL    |       |
+| middlename             | varchar(30) | YES  |     | NULL    |       |
+| lastname               | varchar(30) | YES  |     | NULL    |       |
+| CUSTOMER_CITY          | varchar(15) | YES  |     | NULL    |       |
+| CUSTOMER_CONTACT_NO    | varchar(10) | YES  |     | NULL    |       |
+| occupation             | varchar(10) | YES  |     | NULL    |       |
+| CUSTOMER_DATE_OF_BIRTH | date        | YES  |     | NULL    |       |
++------------------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+Problem Description
+
+
+
+ Write a query to display the account number, customer’s number, customer’s firstname, lastname, and account opening date.
+Display the records sorted in ascending order based on account number.
+Column Name: account_number, customer_number, firstname, lastname, account_opening_date.
+Sample Output
+
+
+
++----------------+-----------------+-----------+----------+----------------------+
+| account_number | customer_number | firstname | lastname | account_opening_date |
++----------------+-----------------+-----------+----------+----------------------+
+| A00001         | C00001          | RAMESH    | SHARMA   | 2012-12-15           |
+| A00002         | C00002          | AVINASH   | MINHA    | 2012-06-12           |
+| A00003         | C00003          | RAHUL     | RASTOGI  | 2012-05-17           |
+| A00004         | C00002          | AVINASH   | MINHA    | 2013-01-27           |
+| A00005         | C00006          | CHITRESH  | BARWE    | 2012-12-17           |
+| A00006         | C00007          | AMIT      | BORKAR   | 2010-08-12           |
+ select a1.account_number, a1.customer_number, a2.firstname, a2.lastname,account_opening_date from account_master a1,customer_master a2
+ where a1.customer_number=a2.customer_number
+ order by a1.account_number asc;
+
+
+4. Oracle: Location and the number of flights
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the number of flights flying from each location. The Query should display the from location and the number of flights to other locations as “No_of_Flights”.
+Hint: Get the distinct from location and to location. Display the records sorted in ascending order based on from location.
+Columns: from_location, No_of_Flights.
+Sample Output
+
++---------------+---------------+
+| from_location | No_of_Flights |
++---------------+---------------+
+| chennai       |             4 |
+| delhi         |             2 |
+| kolkata       |             3 |
++---------------+---------------+
+
+select from_location,count(*) as No_of_Flights from air_flight
+ group by from_location
+ order by from_location asc;
+5. Oracle : Customer Date of Birth
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+customer_master
++------------------------+-------------+------+-----+---------+-------+
+| Field                  | Type        | Null | Key | Default | Extra |
++------------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_NUMBER        | varchar(6)  | NO   | PRI | NULL    |       |
+| FIRSTNAME              | varchar(30) | YES  |     | NULL    |       |
+| middlename             | varchar(30) | YES  |     | NULL    |       |
+| lastname               | varchar(30) | YES  |     | NULL    |       |
+| CUSTOMER_CITY          | varchar(15) | YES  |     | NULL    |       |
+| CUSTOMER_CONTACT_NO    | varchar(10) | YES  |     | NULL    |       |
+| occupation             | varchar(10) | YES  |     | NULL    |       |
+| CUSTOMER_DATE_OF_BIRTH | date        | YES  |     | NULL    |       |
++------------------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the customer number, firstname, customer’s date of birth. Display the records sorted in ascending order of date of birth year and within that sort by customer_number in ascending order.
+Column Name: customer_number, firstname, customer_data_of_birth
+Sample Output
+
++-----------------+-----------+------------------------+
+| customer_number | firstname | customer_date_of_birth |
++-----------------+-----------+------------------------+
+| C00009          | ABHISHEK  | 22-MAY-73              |
+| C00002          | AVINASH   | 16-OCT-74              |
+| C00008          | NISHA     | 03-DEC-75              |
+| C00001          | RAMESH    | 06-DEC-76              |
++-----------------+-----------+----------
+select customer_number, firstname, CUSTOMER_DATE_OF_BIRTH 
+ from customer_master
+ order by extract(year from CUSTOMER_DATE_OF_BIRTH) asc,customer_number asc;
+
+6. Oracle: Customer Age Registered in 2012
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+CUSTOMER_MASTER
++----------------------+-------------+------+-----+---------+-------+
+| Field                | Type        | Null | Key | Default | Extra |
++----------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_ID          | varchar(10) | NO   | PRI | NULL    |       |
+| CUSTOMER_NAME        | varchar(30) | NO   |     | NULL    |       |
+| CONTACT_NO           | bigint      | YES  |     | NULL    |       |
+| CONTACT_ADD          | varchar(20) | YES  |     | NULL    |       |
+| DATE_OF_REGISTRATION | date        | NO   |     | NULL    |       |
+| AGE                  | varchar(15) | NO   |     | NULL    |       |
++----------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the id, name, age, and contact no of customers whose age is greater than or equal to 21 and who registered in the year 2012.
+Sort all the records in ascending order based on age and then by name.
+Column Name: CUSTOMER_ID, CUSTOMER_NAME, AGE, CONTACT_NO
+Sample Output
+
++-------------+---------------+-----+------------+
+| CUSTOMER_ID | CUSTOMER_NAME | AGE | CONTACT_NO |
++-------------+---------------+-----+------------+
+| CUS002      | ABDHUL        | 21  | 8765432109 |
+| CUS001      | AMIT          | 21  | 9876543210 |
+| CUS005      | GURU          | 21  |       NULL |
+| CUS006      | MOHAN         | 21  | 4321098765 |
++-------------+---------------+-----+----
+select CUSTOMER_ID, CUSTOMER_NAME, AGE, CONTACT_NO
+ from CUSTOMER_MASTER where age>=21 and extract(year from DATE_OF_REGISTRATION)=2012 order by age,customer_name asc;
+
+7. Oracle: Least Number of Tickets
+Database
+Submitted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+air_passenger_profile
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| profile_id    | varchar(10) | NO   |     | NULL    |       |
+| password      | varchar(45) | YES  |     | NULL    |       |
+| first_name    | varchar(45) | YES  |     | NULL    |       |
+| last_name     | varchar(45) | YES  |     | NULL    |       |
+| address       | varchar(45) | YES  |     | NULL    |       |
+| mobile_number | bigint      | YES  |     | NULL    |       |
+| email_id      | varchar(45) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+air_ticket_info
++-----------------------+-------------+------+-----+---------+-------+
+| Field                 | Type        | Null | Key | Default | Extra |
++-----------------------+-------------+------+-----+---------+-------+
+| ticket_id             | varchar(45) | NO   |     | NULL    |       |
+| profile_id            | varchar(10) | YES  |     | NULL    |       |
+| flight_id             | varchar(45) | YES  |     | NULL    |       |
+| flight_departure_date | date        | YES  |     | NULL    |       |
+| status                | varchar(45) | YES  |     | NULL    |       |
++-----------------------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+Problem Description
+
+Write a query to display the customer(s) who has/have booked the least number of tickets in ABC Airlines. Take the string for ABC Airlines as "abc".
+The Query should display profile_id, the customer’s first_name, Address, and the Number of tickets booked as “No_of_Tickets”.
+Display the records sorted in ascending order based on the customer's first name.
+Column Name: profile_id, first_name, address, No_of_Tickets
+Sample Output
+
++------------+------------+-------------------------------------------+---------------+
+| profile_id | first_name | address                                   | No_of_Tickets |
++------------+------------+-------------------------------------------+---------------+
+| 7          | James      | Street 21, Near Bus Stop-Hyderabad-432126 |             1 |
+| 9          | Tanish     |   51A, Greams Lane-Chennai-144587           |             1 |
++------------+------------+-------------------------------------------+-----------
+
+select a2.profile_id, a2.first_name,a2.address,count(a3.flight_id) as No_of_Tickets
+ from air_flight a1,air_passenger_profile a2,air_ticket_info a3
+ where a1.flight_id=a3.flight_id and a3.profile_id=a2.profile_id
+ group by a2.profile_id, a2.first_name,a2.address
+ having count(a3.flight_id)
+<(select count(*) from air_ticket_info a3,air_flight a1,air_passenger_profile a2, 
+where a3.profile_id=a2.profile_id and a1.flight_id=a3.flight_id and a1.airline_name='abc'
+group by a3.flight_id ) 
+order by a2.first_name asc;
+
+
+
+select a2.profile_id, a2.first_name,a2.address,count(*) as No_of_Tickets
+ from air_flight a1,air_passenger_profile a2,air_ticket_info a3
+ where a1.flight_id=a3.flight_id and a3.profile_id=a2.profile_id and a1.airline_name='abc'
+ group by a2.profile_id, a2.first_name,a2.address
+ having count(*)=(select min(ticket_id) 
+                  from (select
+                         count(*) as ticket_count 
+                         from air_ticket_info a3 JOIN air_flight a1 
+                         on a3.flight_id=a1.flight_id
+                         where airline_name='abc'
+                         group by profile_id)
+order by first_name asc;
+
+
+
+
+
+8. Oracle: Seat book details
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+
+
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+air_flight_details
++-----------------------+---------------+------+-----+---------+-------+
+| Field                 | Type          | Null | Key | Default | Extra |
++-----------------------+---------------+------+-----+---------+-------+
+| flight_id             | varchar(45)   | NO   |     | NULL    |       |
+| flight_departure_date | date          | YES  |     | NULL    |       |
+| price                 | decimal(10,2) | YES  |     | NULL    |       |
+| available_seats       | int           | YES  |     | NULL    |       |
++-----------------------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the flight details in which more than 10% of seats have been booked.
+The query should display Flight_Id, From_Location, To_Location,Total_Seats, seats booked as “No_of_Seats_Booked”.
+Display the records sorted in ascending order based on flight id and then by No_of_Seats_Booked
+Column Name: flight_id, from_location, to_location, total_seats, No_of_Seats_Booked
+Sample Output
+
+
+
++-----------+---------------+-------------+-------------+--------------------+
+| flight_id | from_location | to_location | total_seats | No_of_Seats_Booked |
++-----------+---------------+-------------+-------------+--------------------+
+| 3170      | delhi         | kolkata     |         100 |                 90 |
+| 3172      | kolkata       | chennai     |         100 |                 68 |
+| 3173      | hyderabad     | chennai     |         100 |                 88 |
+| 3180      | kolkata       | kochi       |         200 |                186 |
++-----------+---------------+------------
+9. Oracle: Item master details
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+item_master
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| item_id          | varchar(6)  | NO   | PRI | NULL    |       |
+| item_description | varchar(25) | YES  |     | NULL    |       |
+| issue_status     | char(1)     | YES  |     | NULL    |       |
+| item_make        | varchar(25) | YES  |     | NULL    |       |
+| item_category    | varchar(20) | YES  |     | NULL    |       |
+| item_valuation   | int         | YES  |     | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+Problem Description
+
+ Write a query to find the number of items in each category, make, and description. The Query should display the Item Category, Make, description, and the number of items as No_of_Items.
+Display the records in ascending order based on Item Category, then by item make, and then by item description.
+Column Name:  item_category, item_make, item_description, and No_of_items
+Sample Output
+
++---------------+-----------+------------------+-------------+
+| item_category | item_make | item_description | No_of_items |
++---------------+-----------+------------------+-------------+
+| Crockery      | Bonechina | Dinning Set      |           1 |
+| Crockery      | Bonechina | Tea Set          |           1 |
+| Furniture     | Steel     | Cupboard         |           2 |
+| Furniture     | Steel     | Side Table       |           1 |
+| Furniture     | Wooden    | Tea Table        |           2 |
+| Stationary    | Plastic   | Pen              |           2 |
+| Stationary    | Wooden    | Pencil           |           1 |
++---------------+-----------+-----------
+ select item_category, item_make, item_description,count(*) as No_of_items
+ from item_master
+ group by item_category, item_make, item_description
+ order by item_category, item_make, item_description asc;
+10. Oracle: Total average ticket cost
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+air_flight_details
++-----------------------+---------------+------+-----+---------+-------+
+| Field                 | Type          | Null | Key | Default | Extra |
++-----------------------+---------------+------+-----+---------+-------+
+| flight_id             | varchar(45)   | NO   |     | NULL    |       |
+| flight_departure_date | date          | YES  |     | NULL    |       |
+| price                 | decimal(10,2) | YES  |     | NULL    |       |
+| available_seats       | int           | YES  |     | NULL    |       |
++-----------------------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the flight_id, from_location,to_location, number of services as “No_of_Service”, and average ticket price as “Average_Price” whose average ticket price is greater than the total average ticket cost of all flights.
+Order the result at the lowest average price.
+Column Name: flight_id, from_location, to_location, No_of_Service, Average_Price
+Sample Output
+
++-----------+---------------+-------------+---------------+---------------+
+| flight_id | from_location | to_location | No_of_Service | Average_Price |
++-----------+---------------+-------------+---------------+---------------+
+| 3175      | chennai       | hyderabad   |             1 |   3500        |
+| 3174      | kolkata       | delhi       |             1 |   3800        |
+| 3176      | kochi         | chennai     |             1 |   8000        |
++-----------+---------------+------------
+
+
+11. Oracle: Card valid date
+Database
+accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_card_details 
++-----------------+------------+------+-----+---------+-------+
+| Field           | Type       | Null | Key | Default | Extra |
++-----------------+------------+------+-----+---------+-------+
+| employee_id     | varchar(6) | YES  |     | NULL    |       |
+| loan_id         | varchar(6) | YES  |     | NULL    |       |
+| card_issue_date | date       | YES  |     | NULL    |       |
++-----------------+------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+loan_card_master
++-------------------+-------------+------+-----+---------+-------+
+| Field             | Type        | Null | Key | Default | Extra |
++-------------------+-------------+------+-----+---------+-------+
+| loan_id           | varchar(6)  | NO   | PRI | NULL    |       |
+| loan_type         | varchar(15) | YES  |     | NULL    |       |
+| duration_in_years | int         | YES  |     | NULL    |       |
++-------------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+Problem Description
+
+Write a query to display the employee id, employee name, card issue date, and card valid date. Order by employee name and then by card valid date.
+Give the alias name to display the card's valid date as CARD_VALID_DATE.
+[Hint: Validity in years for the loan card is given in the loan_card_master table. The validity date is calculated by adding the number of years in the loan card issue date. If the duration of the year is zero then display AS 'No Validity Date'.
+Column Name: employee_id, employee_name, card_issue_date, and CARD_VALID_DATE
+Sample Output
+
++-------------+---------------+-----------------+------------------+
+| employee_id | employee_name | card_issue_date | CARD_VALID_DATE  |
++-------------+---------------+-----------------+------------------+
+| E00002      | Abhay         | 2007-02-01      | 2012-02-01       |
+| E00002      | Abhay         | 2007-03-11      | No Validity Date |
+| E00003      | Anita         | 2007-04-15      | 2008-04-15       |
++-------------+---------------+-----------------+------------------+
+
+
+
+ select e1.employee_id,e1.employee_name,e2.card_issue_date,
+ CASE 
+    WHEN l.duration_in_year>0 THEN TO_CHAR(ADD_MONTHS(e2.card_issue_date, e3..duration_in_years * 12), 'YYYY-MM-DD')
+ WHEN duration_in_years = 0 THEN 'No Validity Date'
+  END AS CARD_VALID_DATE
+ from employee_master e1,employee_card_details e2,loan_card_master e3
+ where e1.employee_id=e2.employee_id and e2.loan_id=e3.loan_id 
+ order by e1.employee_name,CARD_VALID_DATE asc;
+
+12. Oracle: Minimum Total Valuation Product
+Database
+Attempted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+item_master
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| item_id          | varchar(6)  | NO   | PRI | NULL    |       |
+| item_description | varchar(25) | YES  |     | NULL    |       |
+| issue_status     | char(1)     | YES  |     | NULL    |       |
+| item_make        | varchar(25) | YES  |     | NULL    |       |
+| item_category    | varchar(20) | YES  |     | NULL    |       |
+| item_valuation   | int         | YES  |     | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_issue_details
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| issue_id    | varchar(6) | NO   | PRI | NULL    |       |
+| employee_id | varchar(6) | YES  |     | NULL    |       |
+| item_id     | varchar(6) | YES  |     | NULL    |       |
+| issue_date  | date       | YES  |     | NULL    |       |
+| return_date | date       | YES  |     | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+Problem Description
+
+Write a query to display the employee id, employee name, and total valuation for the employees who have issued minimum total valuation of the product. Give the alias name for total valuation as TOTAL_VALUATION.
+[Hint: Suppose an employee E00019 issued items of price 5000, 10000, 12000, and E00020 issued items of price 2000, 7000, and 1000. So the valuation of items taken by E00019 is 27000 and for E00020 it is 10000. So the employee id and employee name of E00020 should be displayed. ]
+Column Name:  employee_id, employee_name, and TOTAL_VALUATION
+Sample Output
+
++-------------+---------------+-----------------+
+| employee_id | employee_name | TOTAL_VALUATION |
++-------------+---------------+-----------------+
+| E00082      | Anshu         |            9500 |
+
+
++----------------+-----------------+-----
+
+ select e2.employee_id, e2.employee_name,sum(e1.item_valuation) as TOTAL_VALUATION
+ from item_master e1,employee_master e2,employee_issue_details e3
+ where e1.item_id=e3.item_id and e3.employee_id=e2.employee_id
+ group by 
+ e2.employee_id,e2.employee_name
+ having 
+  SUM(e1.item_valuation) = (
+        SELECT MIN(total_valuation)
+        FROM (
+            SELECT 
+                SUM(im.item_valuation) AS total_val
+            FROM 
+                employee_issue_details eid
+            JOIN 
+                item_master im ON eid.item_id = im.item_id
+            GROUP BY 
+                eid.employee_id
+        )
+    );

@@ -1,0 +1,640 @@
+1. Oracle: Average ticket's cost in each flight
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+air_flight
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| flight_id      | varchar(45) | NO   |     | NULL    |       |
+| airline_id     | varchar(45) | YES  |     | NULL    |       |
+| airline_name   | varchar(45) | YES  |     | NULL    |       |
+| from_location  | varchar(45) | YES  |     | NULL    |       |
+| to_location    | varchar(45) | YES  |     | NULL    |       |
+| departure_time | time        | YES  |     | NULL    |       |
+| arrival_time   | time        | YES  |     | NULL    |       |
+| duration       | time        | YES  |     | NULL    |       |
+| total_seats    | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+air_flight_details
++-----------------------+---------------+------+-----+---------+-------+
+| Field                 | Type          | Null | Key | Default | Extra |
++-----------------------+---------------+------+-----+---------+-------+
+| flight_id             | varchar(45)   | NO   |     | NULL    |       |
+| flight_departure_date | date          | YES  |     | NULL    |       |
+| price                 | decimal(10,2) | YES  |     | NULL    |       |
+| available_seats       | int           | YES  |     | NULL    |       |
++-----------------------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the average cost of the tickets on each flight on all scheduled dates.
+The query should display flight_id, from_location, to_location and Average price as “Price”.
+Display the records sorted in ascending order based on flight id and then by from_location and then by to_location.
+Column Name: flight_id, from_location, to_location, Average_Price
+Sample Output
+
++-----------+---------------+-------------+---------------+
+| flight_id | from_location | to_location | Average_Price |
++-----------+---------------+-------------+---------------+
+| 3170      | delhi         | kolkata     |   1000.000000 |
+| 3172      | kolkata       | chennai     |   3000.000000 |
+| 3173      | hyderabad     | chennai     |   2000.000000 |
+| 3174      | kolkata       | delhi       |   3800.000000 |
+| 3175      | chennai       | hyderabad   |   3500.000000 |
++-----------+---------------+-------------+---------------+
+
+ select a1.flight_id, a1.from_location, a1.to_location,avg(a2.price) as Average_Price
+ from air_flight a1,air_flight_details a2 where a1.flight_id=a2.flight_id
+ group by a1.flight_id, a1.from_location, a1.to_location
+ order by a1.flight_id, a1.from_location, a1.to_location asc;
+
+2. Oracle: Branch Having Maximum Customer
+Database
+Accepted
+ER Diagram:
+
+Tables Description
+
+account_master
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| account_number       | varchar(255) | NO   | PRI | NULL    |       |
+| customer_number      | varchar(255) | YES  | MUL | NULL    |       |
+| branch_id            | varchar(255) | YES  | MUL | NULL    |       |
+| opening_balance      | int          | YES  |     | NULL    |       |
+| account_opening_date | date         | YES  |     | NULL    |       |
+| account_type         | varchar(10)  | YES  |     | NULL    |       |
+| account_status       | varchar(10)  | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+branch_master
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| branch_id   | varchar(6)  | NO   | PRI | NULL    |       |
+| branch_name | varchar(30) | YES  |     | NULL    |       |
+| branch_city | varchar(30) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+Problem Description
+
+Write a query to show the branch name and branch city where we have the maximum number of customers.
+For example, branch B00019 has 3 customers, B00020 has 7 and B00021 has 10. So branch id B00021 is having a maximum number of customers. If B00021 is the Koramangla branch in Bangalore, the Koramangla branch should be displayed along with the city name Bangalore.
+In case of multiple records, display the records sorted in ascending order based on branch name.
+Column Name: branch_name, branch_city
+Sample Output
+
++---------------+-------------+
+| branch_name   | branch_city |
++---------------+-------------+
+| KORAMANGLA     | BANGALORE   |
++---------------+-------------+
+
+ select b.branch_name, b.branch_city from branch_master b,account_master a
+ where a.branch_id=b.branch_id
+ group by branch_name, branch_city
+ having count(a.customer_number)>=All(select count(a.customer_number)from account_master a group by branch_id)
+ order by branch_name asc;
+
+
+
+3. Oracle: Count cards for Ram
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_card_details
++-----------------+------------+------+-----+---------+-------+
+| Field           | Type       | Null | Key | Default | Extra |
++-----------------+------------+------+-----+---------+-------+
+| employee_id     | varchar(6) | YES  |     | NULL    |       |
+| loan_id         | varchar(6) | YES  |     | NULL    |       |
+| card_issue_date | date       | YES  |     | NULL    |       |
++-----------------+------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+Problem Description
+
+Write a query to count the number of cards issued to an employee “Ram”. Give the count an alias name as No_of_Cards.
+Column Name: No_of_Cards
+Sample Output
+
++-------------+
+| No_of_Cards |
++-------------+
+|           9 |
++-------------+
+ select count(*) as No_of_Cards from employee_card_details where employee_id in(select employee_id from employee_master where employee_name='Ram');
+
+4. Oracle: No. of employees in HR department
+Database
+Accepted
+Database: loan
+
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the number of employees in the HR department. Give the alias name as No_of_Employees. Take the string for ABC Airlines as "HR".
+Column Name: No_of_Employees
+Sample Output
+
++-----------------+
+| No_of_Employees |
++-----------------+
+|               7 |
++-----------------+
+
+select count(employee_id) as No_of_Employees from employee_master where department='HR'; 
+
+5. Oracle: Employee with no loan cards
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_card_details
++-----------------+------------+------+-----+---------+-------+
+| Field           | Type       | Null | Key | Default | Extra |
++-----------------+------------+------+-----+---------+-------+
+| employee_id     | varchar(6) | YES  |     | NULL    |       |
+| loan_id         | varchar(6) | YES  |     | NULL    |       |
+| card_issue_date | date       | YES  |     | NULL    |       |
++-----------------+------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the employee id and employee name who doesn’t have loan cards.
+Display the records sorted in ascending order based on employee id.
+Column Name: employee_id, employee_name
+Sample Output
+
++-------------+---------------+
+| employee_id | employee_name |
++-------------+---------------+
+| E00014      | Zubeen        |
+| E00015      | Rashika       |
++-------------+---------------+
+
+ select employee_id, employee_name from employee_master where employee_id not in(select employee_id from employee_card_details)
+ order by employee_id asc;
+
+6. Oracle: Number of men & women Employees
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+Problem Description
+
+ Write a query to display the number of men & women Employees. The query should display the gender and number of Employees as No_of_Employees.
+Display the records sorted in ascending order based on gender.
+Column Name: gender, No_of_Employees
+Sample Output
+
++--------+--------------------+
+| gender | No_of_Employees    |
++--------+--------------------+
+| F      |                 12 |
+| M      |                 14 |
++--------+--------------------+
+ select gender,count(*) as No_of_Employees from employee_master group by gender 
+ order by gender asc;
+
+7. Oracle : Occupation of Customer
+Database
+Rejected
+ER Diagram:
+
+
+
+Tables Descriptions
+
+account_master
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| account_number       | varchar(255) | NO   | PRI | NULL    |       |
+| customer_number      | varchar(255) | YES  | MUL | NULL    |       |
+| branch_id            | varchar(255) | YES  | MUL | NULL    |       |
+| opening_balance      | int          | YES  |     | NULL    |       |
+| account_opening_date | date         | YES  |     | NULL    |       |
+| account_type         | varchar(10)  | YES  |     | NULL    |       |
+| account_status       | varchar(10)  | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+customer_master
++------------------------+-------------+------+-----+---------+-------+
+| Field                  | Type        | Null | Key | Default | Extra |
++------------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_NUMBER        | varchar(6)  | NO   | PRI | NULL    |       |
+| FIRSTNAME              | varchar(30) | YES  |     | NULL    |       |
+| middlename             | varchar(30) | YES  |     | NULL    |       |
+| lastname               | varchar(30) | YES  |     | NULL    |       |
+| CUSTOMER_CITY          | varchar(15) | YES  |     | NULL    |       |
+| CUSTOMER_CONTACT_NO    | varchar(10) | YES  |     | NULL    |       |
+| occupations            | varchar(10) | YES  |     | NULL    |       |
+| CUSTOMER_DATE_OF_BIRTH | date        | YES  |     | NULL    |       |
++------------------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the customer's firstname, city, and account number whose occupation is not Business, Service, or Student.
+Display the records sorted in ascending order based on the customer's first name and then by account number.
+Column Name: firstname, customer_city, account_number,
+Sample Output
+
++-----------+---------------+----------------+
+| firstname | customer_city | account_number |
++-----------+---------------+----------------+
+| PAYAL     | DELHI         | A00015         |
++-----------+---------------+-----------
+
+select  c.firstname, c.customer_city, a.account_number
+ from account_master a,customer_master c 
+ where a.customer_number=c.customer_number 
+ and c.occupations not in('Business', 'Service','Student')
+ order by c.firstname,a.account_number asc;
+
+8. Oracle: Employee issued item
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_issue_details 
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| issue_id    | varchar(6) | NO   | PRI | NULL    |       |
+| employee_id | varchar(6) | YES  |     | NULL    |       |
+| item_id     | varchar(6) | YES  |     | NULL    |       |
+| issue_date  | date       | YES  |     | NULL    |       |
+| return_date | date       | YES  |     | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the employee id, employee name who have not issued with any item in the year 2013.
+Hint: Exclude those employees who was never issued with any of the items in all the years.
+Display the records sorted in ascending order based on employee id.
+Column Name: employee_id, employee_name
+Sample Output
+
++-------------+---------------+
+| employee_id | employee_name |
++-------------+---------------+
+| E00001      | Ram           |
+| E00003      | John          |
+| E00006      | Anita         |
++-------------+---------------+
+
+
+
+SELECT e.employee_id, e.employee_name
+FROM employee_master e, employee_issue_details i
+WHERE e.employee_id = i.employee_id
+  AND e.employee_id NOT IN (
+      SELECT employee_id
+      FROM employee_issue_details
+      WHERE EXTRACT(YEAR FROM issue_date) = 2013
+  )
+GROUP BY e.employee_id, e.employee_name
+ORDER BY e.employee_id ASC;
+
+9. Oracle: Employee Details For Loan
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_issue_details
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| issue_id    | varchar(6) | NO   | PRI | NULL    |       |
+| employee_id | varchar(6) | YES  |     | NULL    |       |
+| item_id     | varchar(6) | YES  |     | NULL    |       |
+| issue_date  | date       | YES  |     | NULL    |       |
+| return_date | date       | YES  |     | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+Problem Description
+
+Write a query to display issue_id, employee_id, and employee_name. Display the records sorted in ascending order based on issue id.
+Column Name: issue_id, employee_id, and employee_name
+Sample Output
+
++----------+-------------+---------------+
+| issue_id | employee_id | employee_name |
++----------+-------------+---------------+
+| ISS001   | E00001      | Rahul         |
+| ISS002   | E00001      | Raj           |
+| ISS003   | E00002      | Abhishek      |
+| ISS004   | E00003      | Anita         |
++----------+-------------+--------------
+
+ select e1.issue_id, e1.employee_id,e.employee_name
+ from employee_master e,employee_issue_details e1
+ where e.employee_id=e1.employee_id
+ order by e1.issue_id;
+
+10. Oracle: Director with at least 1 movie
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+MOVIES_MASTER
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| MOVIE_ID       | varchar(10) | NO   | PRI | NULL    |       |
+| MOVIE_NAME     | varchar(50) | NO   |     | NULL    |       |
+| RELEASE_DATE   | varchar(30) | NO   |     | NULL    |       |
+| LANGUAGE       | varchar(30) | YES  |     | NULL    |       |
+| RATING         | int         | YES  |     | NULL    |       |
+| DURATION       | varchar(10) | NO   |     | NULL    |       |
+| MOVIE_TYPE     | varchar(3)  | YES  |     | NULL    |       |
+| MOVIE_CATEGORY | varchar(20) | NO   |     | NULL    |       |
+| DIRECTOR       | varchar(20) | NO   |     | NULL    |       |
+| LEAD_ROLE_1    | varchar(3)  | NO   |     | NULL    |       |
+| LEAD_ROLE_2    | varchar(4)  | NO   |     | NULL    |       |
+| RENT_COST      | bigint      | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+12 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the director's name, movie name, and lead_actor_name1 as of all the movies directed by the director who directed at least one movie.
+Display the director's name in capital letters. Use DIRECTOR_NAME as an alias name for the director name column.
+Display the records sorted in ascending order based on director_name and then by movie_name in descending order.
+Column Name: DIRECTOR_NAME, movie_name and lead_role_1
+Sample Output
+
++---------------+---------------+-------------+
+| DIRECTOR_NAME | movie_name    | lead_role_1 |
++---------------+---------------+-------------+
+| DIR1          | DIEHARD       | L1          |
+| DIR10         | TITANIC       | L1          |
+| DIR11         | THE NOTE BOOK | L2          |
+| DIR2          | THE MATRIX    | L1          |
+| DIR3          | INCEPTION     | L15         |
++---------------+---------------+-------
+select upper(director) as DIRECTOR_NAME, movie_name,lead_role_1
+ from Movies_master 
+ where director is not null
+ order by director_name asc,movie_name desc;
+
+11. Oracle: Item Details
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+employee_master
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| employee_id     | varchar(6)  | NO   | PRI | NULL    |       |
+| employee_name   | varchar(20) | YES  |     | NULL    |       |
+| designation     | varchar(25) | YES  |     | NULL    |       |
+| department      | varchar(25) | YES  |     | NULL    |       |
+| gender          | char(1)     | YES  |     | NULL    |       |
+| date_of_birth   | date        | YES  |     | NULL    |       |
+| date_of_joining | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+employee_issue_details 
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| issue_id    | varchar(6) | NO   | PRI | NULL    |       |
+| employee_id | varchar(6) | YES  |     | NULL    |       |
+| item_id     | varchar(6) | YES  |     | NULL    |       |
+| issue_date  | date       | YES  |     | NULL    |       |
+| return_date | date       | YES  |     | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+item_master
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| item_id          | varchar(6)  | NO   | PRI | NULL    |       |
+| item_description | varchar(25) | YES  |     | NULL    |       |
+| issue_status     | char(1)     | YES  |     | NULL    |       |
+| item_make        | varchar(25) | YES  |     | NULL    |       |
+| item_category    | varchar(20) | YES  |     | NULL    |       |
+| item_valuation   | int         | YES  |     | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display the issue id, employee id, employee name, item id, item description, and issue date. 
+Display the data in descending order of date and then by issue id in ascending order.
+Column Name: issue_id, employee_id, employee_name, item_id, item_description , issue_date
+Sample Output
+
++----------+-------------+---------------+---------+------------------+------------+
+| issue_id | employee_id | employee_name | item_id | item_description | issue_date |
++----------+-------------+---------------+---------+------------------+------------+
+| ISS009   | E00004      | Zuben         | I00018  | Dinning Set      | 18-APR-13 |
+| ISS007   | E00004      | Zuben         | I00012  | Double Bed       | 14-APR-13 |
+| ISS004   | E00003      | Anita         | I00007  | Dinning Chair    | 04-JUL-10 |
+| ISS005   | E00003      | Anita         | I00008  | Tea Table        | 04-JUL-10 |
++----------+-------------+--------------
+
+ select e2.issue_id, e1.employee_id, e1.employee_name, e2.item_id, e3.item_description , e2.issue_date 
+ from employee_master e1,employee_issue_details e2,item_master e3
+ where e1.employee_id=e2.employee_id and e2.item_id=e3.item_id
+ order by issue_date desc,issue_id asc;
+
+12. Oracle: Contacts & Movie Category
+Database
+Accepted
+ER Diagram:
+
+
+
+Tables Descriptions
+
+CUSTOMER_MASTER
++----------------------+-------------+------+-----+---------+-------+
+| Field                | Type        | Null | Key | Default | Extra |
++----------------------+-------------+------+-----+---------+-------+
+| CUSTOMER_ID          | varchar(10) | NO   | PRI | NULL    |       |
+| CUSTOMER_NAME        | varchar(30) | NO   |     | NULL    |       |
+| CONTACT_NO           | bigint      | YES  |     | NULL    |       |
+| CONTACT_ADD          | varchar(20) | YES  |     | NULL    |       |
+| DATE_OF_REGISTRATION | date        | NO   |     | NULL    |       |
+| AGE                  | varchar(15) | NO   |     | NULL    |       |
++----------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+﻿CUSTOMER_ISSUE_DETAILS
+﻿CUSTOMER_ISSUE_DETAILS
++--------------------+-------------+------+-----+---------+-------+
+| Field              | Type        | Null | Key | Default | Extra |
++--------------------+-------------+------+-----+---------+-------+
+| ISSUE_ID           | varchar(10) | NO   | PRI | NULL    |       |
+| CUSTOMER_ID        | varchar(10) | NO   | MUL | NULL    |       |
+| MOVIE_ID           | varchar(10) | YES  | MUL | NULL    |       |
+| ISSUE_DATE         | date        | NO   |     | NULL    |       |
+| RETURN_DATE        | date        | NO   |     | NULL    |       |
+| ACTUAL_DATE_RETURN | date        | NO   |     | NULL    |       |
++--------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+﻿MOVIES_MASTER
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| MOVIE_ID       | varchar(10) | NO   | PRI | NULL    |       |
+| MOVIE_NAME     | varchar(50) | NO   |     | NULL    |       |
+| RELEASE_DATE   | varchar(30) | NO   |     | NULL    |       |
+| LANGUAGE       | varchar(30) | YES  |     | NULL    |       |
+| RATING         | int         | YES  |     | NULL    |       |
+| DURATION       | varchar(10) | NO   |     | NULL    |       |
+| MOVIE_TYPE     | varchar(3)  | YES  |     | NULL    |       |
+| MOVIE_CATEGORY | varchar(20) | NO   |     | NULL    |       |
+| DIRECTOR       | varchar(20) | NO   |     | NULL    |       |
+| LEAD_ROLE_1    | varchar(3)  | NO   |     | NULL    |       |
+| LEAD_ROLE_2    | varchar(4)  | NO   |     | NULL    |       |
+| RENT_COST      | bigint      | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+12 rows in set (0.00 sec)
+Problem Description
+
+Write a query to display customer id, customer name,contact number, movie category and number of movies issued to each customer based on movie category who has been issued with more than one movie in that category. Example: Display contact number as "+91-876-456-2345" format.
+Hint:Use NO_OF_MOVIES as alias name for number of movies column.
+Hint:Use CONTACT_ISD as alias name for contact number.
+Display the records sorted in ascending order based on customer name and then by movie category.
+Column Name: CUSTOMERID, CUSTOMER_NAME, CONTACT_ISD, MOVIE_CATEGORY, NO_OF_MOVIES
+Sample Output
+
+CUSTOMERID CUSTOMER_NAME   CONTACT_ISD            MOVIE_CATEGORY       NO_OF_MOVIES
+---------- --------------- ---------------------- -------------------- ------------
+CUS002     ABDHUL          +91-876-543-2109        ACTION               2
+CUS001     AMIT            +91-987-654-3210        ACTION               2
+CUS003     GAYAN           +91-765-432-1098        ACTION               3
+CUS003     GAYAN           +91-765-432-1098        ROMANCE              4
+CUS004     RADHA           +91-654-321-0987        COMEDY               3
+
+select c1.customer_id as CUSTOMERID, c1.CUSTOMER_NAME, 
+ '+91-' || SUBSTR(contact_no, 1, 3) || '-' ||
+    SUBSTR(contact_no, 4, 3) || '-' ||
+    SUBSTR(contact_no, 7) as CONTACT_ISD, 
+ c3.MOVIE_CATEGORY,count(*) as NO_OF_MOVIES
+ from customer_master c1,customer_issue_details c2,movies_master c3
+ where c1.customer_id=c2.customer_id and c2.movie_id=c3.movie_id
+ group by c1.customer_id,c1.customer_name,c1.contact_no,c3.MOVIE_CATEGORY
+ having count(*)>1
+ order by customer_name,MOVIE_CATEGORY asc;
