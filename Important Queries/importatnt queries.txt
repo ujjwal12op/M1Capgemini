@@ -164,3 +164,181 @@ GROUP BY
     af.total_seats
 HAVING
     (COUNT(ati.ticket_id) * 100.0 / af.total_seats) > 10;
+
+
+Q1.  Write a Query to find out minimum total valuation of the product. (USE CTE)
+
+WITH emptotals AS (
+SELECT em.employee_id , em.employee_name , SUM(im.item_valuation) as total
+FROM table1 JOIN table2 ON a.x = b.x
+GROUP BY em.employee_id , em.employee_name
+)
+
+SELECT * FROM emptotals
+WHERE total = (SELECT MIN(total) FROM emptotals);
+
+AND JUST REPLACE THIS CONCEPT FOR MAXIMUM also.
+
+Fact1 : WHEN USING CASE do not apply commas AFTER each when..
+Fact2 : If said in question if contact number not given then replace it with address , so we can use CASE to replace
+CASE WHEN contact_no is null then address ELSE TO_CHAR(contact_no) END AS CONTACT_TYPE.
+Fact3 : Customers irrespective of holding a library card . : SO HERE is the intuition of LEFT JOIN
+Fact5 : Wheneveer you here the sentence saying like you have X but don’t have Y , X not having Y . From these you should conclude to use LEFT JOIN. AND AFTER APPLYING LEFT JOIN ALWAYS MAKE SOMETHING NULL.	
+
+Q2.  Employee who has not issued any item in the year 2013.
+
+SELECT Distinct em.employee_id , em.employee_name,
+FROM table1 JOIN table2 ON …..
+AND EXTRACT(YEAR FROM issue_date) = 2013
+WHERE employee_id is null and employee_id IN (select employee_id FROM employee_issue_details).
+ORDER BY em.employee_id ASC;
+
+
+Q2.  Branch having maximum customers.
+
+WITH BranchAccountCounts AS (
+    SELECT
+        branch_id,
+        COUNT(account_number) AS customer_count
+    FROM
+        account_master
+    GROUP BY
+        branch_id
+)
+SELECT
+    bm.branch_name,
+    bm.branch_city
+FROM
+    branch_master bm
+JOIN
+    BranchAccountCounts bac ON bm.branch_id = bac.branch_id
+WHERE
+    bac.customer_count = (
+        SELECT MAX(customer_count)
+        FROM BranchAccountCountsim
+    )
+ORDER BY
+    bm.branch_name ASC;
+
+# FACT : If date thing is given In varchar and you want to compare time like between 6 am and 6 pm so do it like 06:00:00 and 18:00:00
+# FACT : If the contact number is not availaiable then display his address .
+SO , USE , CASE WHEN contact_no is null THEN address ELSE to_char(contact_no) END AS
+
+
+Q2.  Total Average Ticket Cost
+
+SELECT af.flight_id , af.from_location , af.to_location , count(af.flight_id)
+FROM table1 JOIN table2 ON a.x = b.x
+GROUP by flight_id , from_location , to_location
+HAVING afd.price>(SELECT AVG(Price) FROM afd)
+ORDER BY ..
+
+
+Q3. Accounts with withdrawal amount more than deposit amount.
+SELECT account_number,
+SUM(CASE WHEN account_type = Withdrawal THEN transaction_amount ELSE 0) as Withdrawal,
+Openining_balance + SUM(CASE WHEN account_type = Deposit THEN Transaction_amount ELSE 0) as Deposit
+GROUP BY ..
+HAVING Withdrawal > Deposit
+
+
+Q4. Delay in Flights
+
+SELECT profile_id,first_name ,last_name,flight_id,flight_departure_date,actual_dep_time,
+Actual_arrival_time,(departure_time + INTERVAL ‘1’ HOUR ) as delayed_departure_time,
+(arrival_time + INTERVAL ‘1’ HOUR) AS 
+
+
+Q5. Write a query to display the flight details in which more than 10% of seats havee been booked
+SELECT * FROM table 
+WHERE (booked_seats/total_seats)>10’
+
+
+
+
+Q6. Actors who acted in maximum number of movies.
+
+WITH CountMovies AS (
+    SELECT lead_role_1, COUNT(*) AS total_movies
+    FROM movie_master
+    GROUP BY lead_role_1
+)
+SELECT mm.movie_id, mm.movie_name, mm.release_date, mm.director
+FROM movie_master mm
+JOIN CountMovies cm 
+    ON mm.lead_role_1 = cm.lead_role_1
+WHERE cm.total_movies = (
+    SELECT MAX(total_movies) FROM CountMovies
+)
+ORDER BY mm.movie_name;
+
+
+Q7. Passenger who booked maximum number of tickets.
+
+WITH CountTickets AS (
+SELECT profile_id , COUNT(*) as Count
+FROM air_ticket_info
+GROUP BY profile_id
+)
+SELECT profile_id
+FROM CountTickets
+WHERE Count = (SELECT MAX(COUNT) FROM CountTickets)
+ORDER BY profile_id;  
+
+
+
+
+Q8. Customer issued with No movies then display 0.
+
+
+SELECT c.customer_name, COUNT(m.movie_id) AS MOVIE_COUNT
+FROM customers c
+LEFT JOIN rentals r ON c.customer_id = r.customer_id
+LEFT JOIN movies m ON r.movie_id = m.movie_id
+GROUP BY c.customer_name
+ORDER BY c.customer_name ASC;
+
+HERE COUNT(NULL) WILL BE 0 so LEFT JOIN enough.
+OR USE COALESCE(COUNT(MOVIE_ID),0)
+
+
+
+
+
+
+Q9. Customer with min/Max movies
+
+WITH MovieCount AS (
+    SELECT 
+        c.customer_id,
+        c.customer_name,
+        COUNT(*) AS total_movies
+    FROM customer c
+    JOIN issue i 
+        ON c.customer_id = i.customer_id
+    GROUP BY c.customer_id, c.customer_name
+    HAVING COUNT(*) >= 1
+)
+SELECT customer_id, customer_name, total_movies
+FROM MovieCount
+WHERE total_movies = (SELECT MAX(total_movies) FROM MovieCount)
+   OR total_movies = (SELECT MIN(total_movies) FROM MovieCount)
+ORDER BY 
+    CASE 
+        WHEN total_movies = (SELECT MAX(total_movies) FROM MovieCount) THEN 1
+        ELSE 2
+    END,
+    customer_name;
+
+
+
+
+
+
+
+
+
+
+
+
+
