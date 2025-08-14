@@ -331,12 +331,109 @@ ORDER BY
     customer_name;
 
 
+Q10. 
+
+SELECT
+    em.employee_id,
+    em.employee_name,
+    ecd.card_issue_date,
+    CASE 
+        WHEN lcm.duration_in_years = 0 THEN 'No Validity Date'
+        ELSE DATE_ADD(ecd.card_issue_date, INTERVAL lcm.duration_in_years  YEAR)
+    END AS CARD_VALID_DATE
+FROM 
+    employee_master em
+JOIN 
+    employee_card_details ecd ON em.employee_id = ecd.employee_id
+JOIN 
+    loan_card_master lcm ON ecd.loan_id = lcm.loan_id
+ORDER BY 
+    em.employee_name ASC,
+    CARD_VALID_DATE ASC;
+
+Q11.
 
 
 
 
+SELECT
+    am.account_number, 
+    am.opening_balance + 
+    SUM(CASE WHEN UPPER(td.transaction_type) = 'DEPOSIT' THEN td.transaction_amount ELSE 0 END) AS Deposit,
+    SUM(CASE WHEN UPPER(td.transaction_type) = 'WITHDRAWAL' THEN td.transaction_amount ELSE 0 END) AS Withdrawal
+FROM 
+    account_master am 
+JOIN 
+    transaction_details td ON am.account_number = td.account_number
+GROUP BY 
+    am.account_number, am.opening_balance
+HAVING 
+    SUM(CASE WHEN UPPER(td.transaction_type) = 'WITHDRAWAL' THEN td.transaction_amount ELSE 0 END) >
+    am.opening_balance + SUM(CASE WHEN UPPER(td.transaction_type) = 'DEPOSIT' THEN td.transaction_amount ELSE 0 END)
+ORDER BY 
+    am.account_number ASC;
 
 
+Q12.
+
+
+SELECT
+    em.employee_id, 
+    em.employee_name
+FROM 
+    employee_master em
+LEFT JOIN 
+    employee_issue_details eid 
+    ON em.employee_id = eid.employee_id 
+    AND EXTRACT(YEAR FROM eid.issue_date) = 2013
+WHERE 
+    eid.issue_id IS NULL 
+    AND em.employee_id IN (
+        SELECT employee_id 
+        FROM employee_issue_details
+    )
+ORDER BY 
+    em.employee_id;
+
+
+Q13. LEAD ACTOR WHO ACTED IN MAXIMUM NUMBER OF MOVIE
+
+WITH lead_count AS (
+    SELECT LEAD_ROLE_1, COUNT(*) AS total_movies
+    FROM movies_master
+    GROUP BY LEAD_ROLE_1
+)
+SELECT movie_id, movie_name, release_date, director
+FROM movies_master
+WHERE LEAD_ROLE_1 IN (
+    SELECT LEAD_ROLE_1
+    FROM lead_count
+    WHERE total_movies = (SELECT MAX(total_movies) FROM lead_count)
+)
+ORDER BY movie_name;
+
+
+SELECT
+FROM
+
+CTE -> WITH
+SELECT : CASE
+FROM 
+JOIN ?- > LEFT JOIN OR INNER JOIN 
+WHERE AND,OR,NOT , SUBQUERY
+GROUP BY , GROUP BY HAVING
+ORDER BY
+ 
+
+WITH ticketCount AS(
+SELECT ticket_id,profile_id,COUNT(*) AS TotalCount
+FROM air_ticket_info
+GROUP BY profile_id
+)
+
+SELECT profile_id FROM ticketCount
+WHERE TotalCount = (SELECT MAX(TotalCount) FROM ticketCount)
+ORDER BY profile_id
 
 
 
